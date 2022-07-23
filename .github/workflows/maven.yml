@@ -44,7 +44,6 @@ jobs:
         
     - name: Creating docker images for apache and tomcat
       run: |
-        docker build . --file Dockerfile --tag my-image-name:$(date +%s)
         docker pull alpine
         docker pull httpd
         docker pull tomcat
