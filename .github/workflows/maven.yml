@@ -41,3 +41,12 @@ jobs:
       run: |
         mvn verify sonar:sonar -Dsonar.projectKey=testrepo1 -Dsonar.login=4c4e9b9c168315a700a1b32a90e04f61931a75ec -Dsonar.host.url=https://sonarcloud.io/
         sleep 60
+        
+    - name: Creating docker images for apache and tomcat
+      run: |
+        docker build . --file Dockerfile --tag my-image-name:$(date +%s)
+        docker pull alpine
+        docker pull httpd
+        docker pull tomcat
+        
+        
