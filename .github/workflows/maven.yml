@@ -39,13 +39,36 @@ jobs:
       
     - name: build & SonarQube analysis
       run: |
-        mvn verify sonar:sonar -Dsonar.projectKey=testrepo1 -Dsonar.login=4c4e9b9c168315a700a1b32a90e04f61931a75ec -Dsonar.host.url=https://sonarcloud.io/
+        mvn verify sonar:sonar -Dsonar.projectKey=testrepo1 -Dsonar.login=${{ secrets.SONAR_TOKEN }} -Dsonar.host.url=https://sonarcloud.io/
         sleep 60
         
-    - name: Creating docker images for apache and tomcat
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY }}
+        aws-secret-access-key: ${{ secrets.AWS_SECRET_KEY }}
+        aws-region: ap-south-1
+
+    - name: Login to Amazon ECR
+      id: login-ecr
+      uses: aws-actions/amazon-ecr-login@v1
+
+    - name: Build, tag, and push apache image to Amazon ECR
+      env:
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        ECR_REPOSITORY: apache-registry
+        IMAGE_TAG: apache_image
       run: |
-        docker pull alpine
-        docker pull httpd
-        docker pull tomcat
+        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -f /home/runner/work/java-app/java-app/apache/Dockerfile .
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+ 
+    - name: Build, tag, and push tomcat image to Amazon ECR
+      env:
+        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+        ECR_REPOSITORY: tomcat-registory
+        IMAGE_TAG: tomcat_image
+      run: |
+        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -f /home/runner/work/java-app/java-app/tomcat/Dockerfile .
+        docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
         
         
