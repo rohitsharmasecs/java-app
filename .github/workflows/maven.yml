@@ -101,6 +101,6 @@ jobs:
           sudo aws configure set secret_access_key "${{ secrets.AWS_SECRET_KEY }}"
           sudo aws ecr get-login-password --region us-east-1 | sudo docker login --username AWS --password-stdin 323922828731.dkr.ecr.us-east-1.amazonaws.com
           sudo docker pull 323922828731.dkr.ecr.us-east-1.amazonaws.com/tomcat-reg:tomcat_image
-          sudo docker run -i -t -d -p 80:80 323922828731.dkr.ecr.us-east-1.amazonaws.com/tomcat-reg:tomcat_image  
+          sudo docker run -i -t -d -p 8080:8080 323922828731.dkr.ecr.us-east-1.amazonaws.com/tomcat-reg:tomcat_image  
         
         
