@@ -76,7 +76,7 @@ jobs:
       with:
         host: 
         port: 22
-        user: ubuntu
+        username: ubuntu
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         script: |
             sudo aws configure set access_key_id "${{ secrets.AWS_ACCESS_KEY }}"
