@@ -84,7 +84,7 @@ jobs:
           sudo aws configure set aws_secret_access_key "${{ secrets.AWS_SECRET_KEY }}"
           sudo aws configure set region "ap-south-1"
           sudo aws configure set output json
-          sudo aws ecr get-login-password --region ap-south-1 | sudo docker login --username AWS --password-stdin 954678508118.dkr.ecr.ap-south-1.amazonaws.com
+          sudo aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin 954678508118.dkr.ecr.ap-south-1.amazonaws.com
           sudo docker pull 954678508118.dkr.ecr.ap-south-1.amazonaws.com/apache-reg:apache_image
           sudo docker run -i -t -d -p 80:80 954678508118.dkr.ecr.ap-south-1.amazonaws.com/apache-reg:apache_image sh
  
@@ -107,6 +107,6 @@ jobs:
           sudo aws configure set aws_secret_access_key "${{ secrets.AWS_SECRET_KEY }}"
           sudo aws configure set region "ap-south-1"
           sudo aws configure set output json
-          sudo aws ecr get-login-password --region ap-south-1 | sudo docker login --username AWS --password-stdin 954678508118.dkr.ecr.ap-south-1.amazonaws.com
+          sudo aws ecr get-login-password --region ap-south-1 | docker login --username AWS --password-stdin 954678508118.dkr.ecr.ap-south-1.amazonaws.com
           sudo docker pull 954678508118.dkr.ecr.ap-south-1.amazonaws.com/tomcat-reg:tomcat_image
           sudo docker run -i -t -d -p 8080:8080 954678508118.dkr.ecr.ap-south-1.amazonaws.com/tomcat-reg:tomcat_image sh
