@@ -74,10 +74,10 @@ jobs:
     - name: Deploy apache image to public ec2
       uses: appleboy/ssh-action@master
       with:
-        host: ${{ secrets.PUBLIC_IP}}
-        username: ${{ secrets.USERNAME }}
+        host: 15.206.94.213
+        username: ubuntu
         key: ${{ secrets.SSH_PRIVATE_KEY }}
-        port: ${{ secrets.PORT }}
+        port: 22
         script: |
           sudo apt install awscli -y
           sudo aws configure set aws_access_key_id "${{ secrets.AWS_ACCESS_KEY }}"
@@ -93,14 +93,14 @@ jobs:
     - name: Deploy tomcat image to private ec2
       uses: appleboy/ssh-action@master
       with:
-        host: ${{ secrets.PRIVATE_IP}}
-        username: ${{ secrets.USERNAME }}
+        host: 10.0.1.249
+        username: ubuntu
         key: ${{ secrets.SSH_PRIVATE_KEY }}
-        port: ${{ secrets.PORT }}
-        proxy_host: ${{ secrets.PUBLIC_IP }}
-        proxy_username: ${{ secrets.USERNAME }}
+        port: 22
+        proxy_host: 15.206.94.213
+        proxy_username: ubuntu
         proxy_key: ${{ secrets.SSH_PRIVATE_KEY }}
-        proxy_port: ${{ secrets.PORT }}
+        proxy_port: 22
         script: |
           sudo apt install awscli -y
           sudo aws configure set aws_access_key_id "${{ secrets.AWS_ACCESS_KEY }}"
