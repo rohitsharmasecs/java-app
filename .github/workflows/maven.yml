@@ -71,36 +71,42 @@ jobs:
         docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG -f /home/runner/work/java-app/java-app/Tomcat/Dockerfile .
         docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
       
-    - name: Deploy apache to public instance
+    - name: Deploy apache image to public ec2
       uses: appleboy/ssh-action@master
       with:
-        host: 
-        port: 22
-        username: ubuntu
+        host: ${{ secrets.PUBLIC_IP}}
+        username: ${{ secrets.USERNAME }}
         key: ${{ secrets.SSH_PRIVATE_KEY }}
+        port: ${{ secrets.PORT }}
         script: |
-            sudo aws configure set access_key_id "${{ secrets.AWS_ACCESS_KEY }}"
-            sudo aws configure set secret_access_key "${{ secrets.AWS_SECRET_KEY }}"
-            sudo aws ecr get-login-password --region us-east-1 | sudo docker login --username AWS --password-stdin 323922828731.dkr.ecr.us-east-1.amazonaws.com
-            sudo docker pull 323922828731.dkr.ecr.us-east-1.amazonaws.com/apache-reg:apache_image
-            sudo docker run -i -t -d -p 80:80 323922828731.dkr.ecr.us-east-1.amazonaws.com/apache-reg:apache_image sh
+          sudo apt install awscli -y
+          sudo aws configure set aws_access_key_id "${{ secrets.AWS_ACCESS_KEY_ID }}"
+          sudo aws configure set aws_secret_access_key "${{ secrets.AWS_SECRET_ACCESS_KEY }}"
+          sudo aws configure set region "us-east-1"
+          sudo aws configure set output json
+          sudo aws ecr get-login-password --region us-east-1 | sudo docker login --username AWS --password-stdin 323922828731.dkr.ecr.us-east-1.amazonaws.com
+          sudo docker pull 323922828731.dkr.ecr.us-east-1.amazonaws.com/apache-reg:apache_image
+          sudo docker run -i -t -d -p 80:80 323922828731.dkr.ecr.us-east-1.amazonaws.com/apache-reg:apache_image sh
+ 
+    
 
-    - name: deploy tomcat image to private ec2
+    - name: Deploy tomcat image to private ec2
       uses: appleboy/ssh-action@master
       with:
-        host: 
-        username: ubuntu
+        host: ${{ secrets.PRIVATE_IP}}
+        username: ${{ secrets.USERNAME }}
         key: ${{ secrets.SSH_PRIVATE_KEY }}
-        port: 22
-        proxy_host: 
-        proxy_username: ubuntu
+        port: ${{ secrets.PORT }}
+        proxy_host: ${{ secrets.PUBLIC_IP }}
+        proxy_username: ${{ secrets.USERNAME }}
         proxy_key: ${{ secrets.SSH_PRIVATE_KEY }}
-        proxy_port: 22
+        proxy_port: ${{ secrets.PORT }}
         script: |
-          sudo aws configure set access_key_id "${{ secrets.AWS_ACCESS_KEY }}"
-          sudo aws configure set secret_access_key "${{ secrets.AWS_SECRET_KEY }}"
+          sudo apt install awscli -y
+          sudo aws configure set aws_access_key_id "${{ secrets.AWS_ACCESS_KEY_ID }}"
+          sudo aws configure set aws_secret_access_key "${{ secrets.AWS_SECRET_ACCESS_KEY }}"
+          sudo aws configure set region "us-east-1"
+          sudo aws configure set output json
           sudo aws ecr get-login-password --region us-east-1 | sudo docker login --username AWS --password-stdin 323922828731.dkr.ecr.us-east-1.amazonaws.com
           sudo docker pull 323922828731.dkr.ecr.us-east-1.amazonaws.com/tomcat-reg:tomcat_image
-          sudo docker run -i -t -d -p 8080:8080 323922828731.dkr.ecr.us-east-1.amazonaws.com/tomcat-reg:tomcat_image  
-        
-        
+          sudo docker run -i -t -d -p 8080:8080 323922828731.dkr.ecr.us-east-1.amazonaws.com/tomcat-reg:tomcat_image sh
